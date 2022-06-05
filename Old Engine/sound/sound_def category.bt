@@ -1,0 +1,85 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: sound_def category
+//   Authors: Timo654, poorly edited by f7cjo
+//   Version: 1.0
+//   Purpose: Parse sound.par category files
+//  Category: 
+// File Mask: sound_def.bin
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../../Common/includes/include.h"
+
+local u32 headerColor = SetRandomBackColor();
+local u64 name_length;
+local u64 name_location;
+local u64 data_location = 0;
+typedef struct
+{
+    SetBackColor( headerColor );
+
+    BigEndian();
+
+    FSeek(96464);
+    {
+        local int i;
+        struct
+        {
+            for ( i = 0; i < 147; i++ )
+            {
+                struct TData Data;
+            }
+        } Data;
+    }
+    
+} TCat <optimize=false>;
+
+
+typedef struct
+{    
+    SetRandomBackColor();
+    name_length = ReadStringLength(FTell());
+    char Name[name_length];
+    name_location = FTell();
+    if (data_location == 0) {
+        FSeek(87056);
+    }
+    else {
+        FSeek(data_location);
+    }
+    u32 Size;
+    s32 Unk1;
+    u32 Padding1;
+    s32 Unk2;
+    s32 Unk3;
+    s32 Unk4;
+    u32 Padding2;
+    s32 Unk5;
+    s32 Unk6;
+    s32 Unk7;
+    s32 Unk8;
+    s32 Unk9;
+    float Unk10;
+    float Unk11;
+    float Unk12;
+    float Unk13;
+    data_location = FTell();
+    FSeek(name_location);
+    
+} TData <read=ReadName>;
+
+
+string ReadName( TData& value )
+{
+    local string category = "";
+    
+    SPrintf( category, "%s",
+        value.Name);
+    return category;
+    
+}
+
+TCat Cat;
